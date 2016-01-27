@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html">
+  <title>Horizontal Application Form - Template Monster Demo</title>
+  <meta name="author" content="Jake Rocheleau">
+  <link rel="shortcut icon" href="http://static.tmimgcdn.com/img/favicon.ico">
+  <link rel="icon" href="http://static.tmimgcdn.com/img/favicon.ico">
+  <link rel="stylesheet" type="text/css" media="all" href="css/styles.css">
+  <link rel="stylesheet" type="text/css" media="all" href="css/switchery.min.css">
+  <!-- link calendar resources -->
+  <link rel="stylesheet" type="text/css" href="css/tcal.css" />
+  <script type="text/javascript" src="js/tcal.js"></script> 
+
+  <script type="text/javascript" src="js/switchery.min.js"></script>
+</head>
+
+<body>
+  <div id="wrapper">
+  
+  <h1>Gr&aacute;ficas Estad&iacute;sticas</h1>
+  
+  <form onsubmit="return false">
+    
+  <div class="col-4">
+    <label>
+      Tipo de gr&aacute;fica
+      <select tabindex="1">
+        <option>Barras</option>
+        <option>Pastel</option>
+        <option>Lineas</option>
+        <option>Impulso</option>
+      </select>    
+    </label>
+  </div>
+  <div class="col-4">
+    <label>
+      Fecha Inicial
+    </label>
+      <input type="text" name="date" class="tcal" value="" readonly="readonly" tabindex="2"/>
+  </div>
+  <div class="col-4">
+    <label>
+      Fecha Final
+    </label>
+      <input type="text" name="date" class="tcal" value="" readonly="readonly" tabindex="2"/>
+    
+  </div>
+  <div class="col-4">
+    <label>
+      Segmento
+      <select tabindex="3">
+        <option>Diario</option>
+        <option>Semanal</option>
+        <option>Mensual</option>
+      </select>
+    </label>
+  </div>
+  
+  
+  <div class="col-submit">
+    <button class="submitbtn">Ver Grafica</button>
+  </div>
+  <div class="col-submit">
+    <img src="index.php">
+  </div>
+  </form>
+
+  </div>
+<script type="text/javascript">
+var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
+
+elems.forEach(function(html) {
+  var switchery = new Switchery(html);
+});
+</script>
+</body>
+</html>

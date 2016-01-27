@@ -3,7 +3,7 @@ include ("jpgraph/src/jpgraph.php");
 include ("jpgraph/src/jpgraph_line.php"); 
 include ("jpgraph/src/jpgraph_bar.php");
 
-mysql_connect("localhost","root","mysql");
+mysql_connect("localhost","root","");
 mysql_select_db("db_prueba");
 
 $sql = "SELECT p.Estado, COUNT(1) AS Contador FROM Persons p GROUP BY p.Estado;";
@@ -27,7 +27,6 @@ $graph = new Graph(450,400,"auto");
 $graph->SetScale("textint"); 
 $graph->img->SetAntiAliasing(); 
 $graph->xgrid->Show(); 
-
 // Create the linear plot 
 /*
 $lineplot=new LinePlot($ydata); 
@@ -35,7 +34,6 @@ $lineplot->SetColor("black");
 $lineplot->SetWeight(2); 
 $lineplot->SetLegend("Horas"); 
 */
-
 // Setup margin and titles 
 $graph->img->SetMargin(40,20,20,40); 
 $graph->title->Set("Ejemplo Bases de Datos"); 
@@ -44,19 +42,15 @@ $graph->xaxis->SetTickLabels($labels);
 $graph->yaxis->title->Set("Contador"); 
 $graph->ygrid->SetFill(true,'#EFEFEF@0.5','#F9BB64@0.5'); 
 //$graph->SetShadow(); 
-
 $barplot1 = new BarPlot($datos);
-
 $barplot1->SetFillGradient("#BE81F7", "#E3CEF6", GRAD_HOR);
-
 $barplot1->SetWidth(30);
-
 // Add the plot to the graph 
 $graph->Add($barplot1); 
-
 // Display the graph 
 $graph->Stroke();
-
 //$graph->Stroke("IMG.PNG");
 
+
 ?>
+
