@@ -52,14 +52,16 @@ namespace ProyectoConteoPersonas {
 	private: System::Windows::Forms::GroupBox^  gBxROI;
 	private: System::Windows::Forms::TextBox^  txtBxLargo;
 	private: System::Windows::Forms::TextBox^  txtBxAncho;
-	private: System::Windows::Forms::TextBox^  txtBxPuntoY;
-	private: System::Windows::Forms::TextBox^  txtBxPuntoX;
+
+
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  lblPuntoY;
 	private: System::Windows::Forms::Label^  lblPuntoX;
 
 	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::DomainUpDown^  domainUpDown2;
+	private: System::Windows::Forms::DomainUpDown^  domainUpDown1;
 
 
 	private:
@@ -88,12 +90,12 @@ namespace ProyectoConteoPersonas {
 			this->gBxROI = (gcnew System::Windows::Forms::GroupBox());
 			this->txtBxLargo = (gcnew System::Windows::Forms::TextBox());
 			this->txtBxAncho = (gcnew System::Windows::Forms::TextBox());
-			this->txtBxPuntoY = (gcnew System::Windows::Forms::TextBox());
-			this->txtBxPuntoX = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->lblPuntoY = (gcnew System::Windows::Forms::Label());
 			this->lblPuntoX = (gcnew System::Windows::Forms::Label());
+			this->domainUpDown1 = (gcnew System::Windows::Forms::DomainUpDown());
+			this->domainUpDown2 = (gcnew System::Windows::Forms::DomainUpDown());
 			this->tbClVentana->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->gBxFormato->SuspendLayout();
@@ -209,10 +211,10 @@ namespace ProyectoConteoPersonas {
 			// 
 			// gBxROI
 			// 
+			this->gBxROI->Controls->Add(this->domainUpDown2);
+			this->gBxROI->Controls->Add(this->domainUpDown1);
 			this->gBxROI->Controls->Add(this->txtBxLargo);
 			this->gBxROI->Controls->Add(this->txtBxAncho);
-			this->gBxROI->Controls->Add(this->txtBxPuntoY);
-			this->gBxROI->Controls->Add(this->txtBxPuntoX);
 			this->gBxROI->Controls->Add(this->label2);
 			this->gBxROI->Controls->Add(this->label1);
 			this->gBxROI->Controls->Add(this->lblPuntoY);
@@ -239,21 +241,6 @@ namespace ProyectoConteoPersonas {
 			this->txtBxAncho->Name = L"txtBxAncho";
 			this->txtBxAncho->Size = System::Drawing::Size(137, 24);
 			this->txtBxAncho->TabIndex = 6;
-			// 
-			// txtBxPuntoY
-			// 
-			this->txtBxPuntoY->Location = System::Drawing::Point(102, 68);
-			this->txtBxPuntoY->Name = L"txtBxPuntoY";
-			this->txtBxPuntoY->Size = System::Drawing::Size(137, 24);
-			this->txtBxPuntoY->TabIndex = 5;
-			// 
-			// txtBxPuntoX
-			// 
-			this->txtBxPuntoX->Location = System::Drawing::Point(102, 32);
-			this->txtBxPuntoX->Name = L"txtBxPuntoX";
-			this->txtBxPuntoX->Size = System::Drawing::Size(137, 24);
-			this->txtBxPuntoX->TabIndex = 4;
-			this->txtBxPuntoX->TextChanged += gcnew System::EventHandler(this, &Ventana::txtBxPuntoX_TextChanged);
 			// 
 			// label2
 			// 
@@ -294,6 +281,22 @@ namespace ProyectoConteoPersonas {
 			this->lblPuntoX->Size = System::Drawing::Size(71, 18);
 			this->lblPuntoX->TabIndex = 0;
 			this->lblPuntoX->Text = L"Punto X";
+			// 
+			// domainUpDown1
+			// 
+			this->domainUpDown1->Location = System::Drawing::Point(102, 28);
+			this->domainUpDown1->Name = L"domainUpDown1";
+			this->domainUpDown1->Size = System::Drawing::Size(120, 24);
+			this->domainUpDown1->TabIndex = 8;
+			this->domainUpDown1->Text = L"domainUpDown1";
+			// 
+			// domainUpDown2
+			// 
+			this->domainUpDown2->Location = System::Drawing::Point(102, 70);
+			this->domainUpDown2->Name = L"domainUpDown2";
+			this->domainUpDown2->Size = System::Drawing::Size(120, 24);
+			this->domainUpDown2->TabIndex = 9;
+			this->domainUpDown2->Text = L"domainUpDown2";
 			// 
 			// Ventana
 			// 

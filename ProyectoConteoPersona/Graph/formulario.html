@@ -22,16 +22,15 @@
   
   <h1>Gr&aacute;ficas Estad&iacute;sticas</h1>
   
-  <form onsubmit="return false">
+  <form action="graficar.php" method="post" target="ventana" name="disponible" onsubmit="window.open('', 'ventana','width=500,height=500')">
     
   <div class="col-4">
     <label>
       Tipo de gr&aacute;fica
-      <select tabindex="1">
-        <option>Barras</option>
-        <option>Pastel</option>
-        <option>Lineas</option>
-        <option>Impulso</option>
+      <select tabindex="1" name="tipo">
+        <option  value="Barras">Barras</option>
+        <option  value="Pastel">Pastel</option>
+        <option  value="Lineas">L&iacute;neas</option>
       </select>    
     </label>
   </div>
@@ -39,34 +38,33 @@
     <label>
       Fecha Inicial
     </label>
-      <input type="text" name="date" class="tcal" value="" readonly="readonly" tabindex="2"/>
+      <input type="text" name="fecha_inicial" class="tcal" readonly="readonly" tabindex="2"/>
   </div>
   <div class="col-4">
     <label>
       Fecha Final
     </label>
-      <input type="text" name="date" class="tcal" value="" readonly="readonly" tabindex="2"/>
+      <input type="text" name="fecha_final" class="tcal" readonly="readonly" tabindex="2"/>
     
   </div>
   <div class="col-4">
     <label>
       Segmento
-      <select tabindex="3">
-        <option>Diario</option>
-        <option>Semanal</option>
-        <option>Mensual</option>
+      <select tabindex="3" name="periodo">
+        <option value="diario">Diario</option>
+        <option value="semanal">Semanal</option>
+        <option value="mensual">Mensual</option>
       </select>
     </label>
   </div>
   
   
   <div class="col-submit">
-    <button class="submitbtn">Ver Grafica</button>
+    <button class="submitbtn" name="graficar">Ver Grafica</button>
   </div>
-  <div class="col-submit">
-    <img src="index.php">
-  </div>
+  
   </form>
+  
 
   </div>
 <script type="text/javascript">
@@ -75,6 +73,7 @@ var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
 elems.forEach(function(html) {
   var switchery = new Switchery(html);
 });
+
 </script>
 </body>
 </html>

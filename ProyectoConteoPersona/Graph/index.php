@@ -6,6 +6,9 @@ include ("jpgraph/src/jpgraph_bar.php");
 mysql_connect("localhost","root","");
 mysql_select_db("db_prueba");
 
+
+
+
 $sql = "SELECT p.Estado, COUNT(1) AS Contador FROM Persons p GROUP BY p.Estado;";
 $res = mysql_query($sql);
 
@@ -36,7 +39,7 @@ $lineplot->SetLegend("Horas");
 */
 // Setup margin and titles 
 $graph->img->SetMargin(40,20,20,40); 
-$graph->title->Set("Ejemplo Bases de Datos"); 
+$graph->title->Set($_POST['tipo']); 
 $graph->xaxis->title->Set("Estado"); 
 $graph->xaxis->SetTickLabels($labels);
 $graph->yaxis->title->Set("Contador"); 
@@ -50,7 +53,6 @@ $graph->Add($barplot1);
 // Display the graph 
 $graph->Stroke();
 //$graph->Stroke("IMG.PNG");
-
 
 ?>
 
