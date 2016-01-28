@@ -1,7 +1,29 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(388,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ProjectPrueba.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Main.cpp
+c:\xampp\htdocs\contadorpersonadip\proyectoconteopersona\projectprueba\Ventana.h(524): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+c:\xampp\htdocs\contadorpersonadip\proyectoconteopersona\projectprueba\Ventana.h(525): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
 Main.cpp(160): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
 Main.cpp(183): warning C4101: 'buf' : unreferenced local variable
+  Ventana.cpp
+c:\xampp\htdocs\contadorpersonadip\proyectoconteopersona\projectprueba\Ventana.h(524): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+c:\xampp\htdocs\contadorpersonadip\proyectoconteopersona\projectprueba\Ventana.h(525): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+  Generating Code...
+c:\opencv\build\include\opencv2\core\cvstd.hpp(592): warning C4793: 'cv::String::String' : function compiled as native :
+  	Found an intrinsic not supported in managed code
+c:\opencv\build\include\opencv2\core\mat.inl.hpp(381): warning C4793: 'cv::Mat::Mat' : function compiled as native :
+  	Found an intrinsic not supported in managed code
+c:\opencv\build\include\opencv2\core\mat.inl.hpp(666): warning C4793: 'cv::Mat::release' : function compiled as native :
+  	Found an intrinsic not supported in managed code
+c:\opencv\build\include\opencv2\core\mat.inl.hpp(1703): warning C4793: 'cv::SparseMat::addref' : function compiled as native :
+  	Found an intrinsic not supported in managed code
+c:\opencv\build\include\opencv2\core\mat.inl.hpp(3304): warning C4793: 'cv::UMat::addref' : function compiled as native :
+  	Found an intrinsic not supported in managed code
+c:\opencv\build\include\opencv2\core\ptr.inl.hpp(67): warning C4793: 'cv::detail::PtrOwner::incRef' : function compiled as native :
+  	Found an intrinsic not supported in managed code
+c:\opencv\build\include\opencv2\core\ptr.inl.hpp(72): warning C4793: 'cv::detail::PtrOwner::decRef' : function compiled as native :
+  	Found an intrinsic not supported in managed code
+c:\opencv\build\include\opencv2\core\mat.inl.hpp(565): warning C4793: 'cv::Mat::operator=' : function compiled as native :
+  	Found an intrinsic not supported in managed code
 c:\opencv\build\include\opencv2\core\cvstd.hpp(592): warning C4793: 'cv::String::String' : function compiled as native :
   	Found an intrinsic not supported in managed code
 c:\opencv\build\include\opencv2\core\mat.inl.hpp(381): warning C4793: 'cv::Mat::Mat' : function compiled as native :
