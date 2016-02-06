@@ -110,6 +110,8 @@ namespace ProyectoConteoPersonas {
 	private: System::Windows::Forms::Label^  label10;
 	private: System::Windows::Forms::Label^  label11;
 	private: System::Windows::Forms::Label^  label12;
+	private: System::Boolean vista_previa=false;
+	private: System::Windows::Forms::Button^  button3;
 
 
 
@@ -155,6 +157,7 @@ namespace ProyectoConteoPersonas {
 			this->label10 = (gcnew System::Windows::Forms::Label());
 			this->label11 = (gcnew System::Windows::Forms::Label());
 			this->label12 = (gcnew System::Windows::Forms::Label());
+			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->tbClVentana->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->gBxFormato->SuspendLayout();
@@ -181,6 +184,7 @@ namespace ProyectoConteoPersonas {
 			// 
 			// tabPage1
 			// 
+			this->tabPage1->Controls->Add(this->button3);
 			this->tabPage1->Controls->Add(this->button2);
 			this->tabPage1->Controls->Add(this->button1);
 			this->tabPage1->Controls->Add(this->gBxFormato);
@@ -199,7 +203,7 @@ namespace ProyectoConteoPersonas {
 			// 
 			this->button2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->button2->Location = System::Drawing::Point(103, 318);
+			this->button2->Location = System::Drawing::Point(20, 318);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(184, 34);
 			this->button2->TabIndex = 6;
@@ -211,12 +215,13 @@ namespace ProyectoConteoPersonas {
 			// 
 			this->button1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->button1->Location = System::Drawing::Point(350, 318);
+			this->button1->Location = System::Drawing::Point(212, 318);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(184, 34);
 			this->button1->TabIndex = 5;
 			this->button1->Text = L"Guardar Configuracion";
 			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &Ventana::button1_Click);
 			// 
 			// gBxFormato
 			// 
@@ -466,6 +471,18 @@ namespace ProyectoConteoPersonas {
 			this->label12->TabIndex = 23;
 			this->label12->Text = L"Punto Inicial:";
 			// 
+			// button3
+			// 
+			this->button3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->button3->Location = System::Drawing::Point(414, 318);
+			this->button3->Name = L"button3";
+			this->button3->Size = System::Drawing::Size(168, 34);
+			this->button3->TabIndex = 7;
+			this->button3->Text = L"Cargar Configuracion";
+			this->button3->UseVisualStyleBackColor = true;
+			this->button3->Click += gcnew System::EventHandler(this, &Ventana::button3_Click);
+			// 
 			// Ventana
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -498,6 +515,7 @@ namespace ProyectoConteoPersonas {
 	private: System::Void txtBxPuntoX_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 	}
 
+
 private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
 	cv::VideoCapture vcap;
 	cv::Mat frame,copy;
@@ -508,14 +526,16 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 	const char* chars =(const char*)(Marshal::StringToHGlobalAnsi(textVideoName->Text)).ToPointer();
 	
 	string videoName = chars;
-	if (videoName == "")
-		MessageBox::Show("Ingrese URL o nombre del video","Atención", MessageBoxButtons::OKCancel,MessageBoxIcon::Asterisk);
+	if (videoName == ""){
+		MessageBox::Show("Ingrese URL o nombre del video", "Atención", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	}
 	else if(!vcap.open(videoName)) {
 		std::cout << "Error opening video stream or file" << std::endl;
 		MessageBox::Show("No se pudo abrir la señal de video", "Atención", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 	}
 	else {
-		while (1){
+		vista_previa = true;
+		while (vista_previa){
 			if (!vcap.open(videoName)) {
 				std::cout << "Error opening video stream or file" << std::endl;
 			}
@@ -533,7 +553,7 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 			numericLimitY1->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { maxY, 0, 0, 0 });
 			numericLimitY2->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { maxY, 0, 0, 0 });
 
-			while (vcap.get(CV_CAP_PROP_POS_FRAMES)<vcap.get(CV_CAP_PROP_FRAME_COUNT) - 1){
+			while (vcap.get(CV_CAP_PROP_POS_FRAMES)<(vcap.get(CV_CAP_PROP_FRAME_COUNT) - 1) && vista_previa){
 
 				if ((int)numericRoiX1->Value <= maxX) roiX1 = (int)numericRoiX1->Value;
 				if ((int)numericRoiX2->Value <= maxX) roiX2 = (int)numericRoiX2->Value;
@@ -551,7 +571,7 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 				rectangle(copy, cv::Point(roiX1, roiY1), cv::Point(roiX2, roiY2), cv::Scalar(0, 0, 255), 2, 8, 0);
 				cv::line(copy, cv::Point(limitX1, limitY1), cv::Point(limitX2, limitY2), cv::Scalar(0, 255, 0));
 
-				imshow("SeñalesVideo", copy);
+				imshow("Video", copy);
 
 				if (cvWaitKey(1) >= 0) break;
 
@@ -570,6 +590,68 @@ private: System::Void tabPage1_Click(System::Object^  sender, System::EventArgs^
 private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 }
 private: System::Void label6_Click(System::Object^  sender, System::EventArgs^  e) {
+}
+private: System::Void saveConfig()
+{
+	CvFileStorage* fs = cvOpenFileStorage("config/Calibracion.xml", 0, CV_STORAGE_WRITE);
+	using namespace Runtime::InteropServices;
+	const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(textVideoName->Text)).ToPointer();
+
+	cvWriteString(fs, "ruta_video", chars);
+	cvWriteInt(fs, "calibrado", 1);
+	cvWriteInt(fs, "showAB", 0);
+	cvWriteInt(fs, "roi_x0", (int)numericRoiX1->Value);
+	cvWriteInt(fs, "roi_y0",(int)numericRoiY1->Value);
+	cvWriteInt(fs, "roi_x1",(int)numericRoiX2->Value);
+	cvWriteInt(fs, "roi_y1",(int)numericRoiY2->Value);
+
+	cvWriteInt(fs, "limitador_x0", (int)numericLimitX1->Value);
+	cvWriteInt(fs, "limitador_y0", (int)numericLimitY1->Value);
+	cvWriteInt(fs, "limitador_x1", (int)numericLimitX2->Value);
+	cvWriteInt(fs, "limitador_y1", (int)numericLimitY2->Value);
+
+	cvReleaseFileStorage(&fs);
+	vista_previa = false;
+}
+private: System::Void loadConfig()
+{
+	CvFileStorage* fs = cvOpenFileStorage("config/Calibracion.xml", 0, CV_STORAGE_READ);
+	string videoName = cvReadStringByName(fs, 0, "ruta_video", 0);
+	textVideoName->Text = gcnew System::String(videoName.c_str());
+	numericRoiX1->Value = cvReadIntByName(fs, 0, "roi_x0", 0);
+	numericRoiY1->Value = cvReadIntByName(fs, 0, "roi_y0", 0);
+	numericRoiX2->Value = cvReadIntByName(fs, 0, "roi_x1", 0);
+	numericRoiY2->Value = cvReadIntByName(fs, 0, "roi_y1", 0);
+
+	numericLimitX1->Value = cvReadIntByName(fs, 0, "limitador_x0", 0);
+	numericLimitY1->Value = cvReadIntByName(fs, 0, "limitador_y0", 0);
+	numericLimitX2->Value = cvReadIntByName(fs, 0, "limitador_x1", 0);
+	numericLimitY2->Value = cvReadIntByName(fs, 0, "limitador_y1", 0);
+
+	cvReleaseFileStorage(&fs);
+}
+private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+
+	cv::VideoCapture vcap;
+	using namespace Runtime::InteropServices;
+	const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(textVideoName->Text)).ToPointer();
+	string videoName = chars;
+	if (videoName == ""){
+		MessageBox::Show("Ingrese URL o nombre del video", "Atención", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	}
+	else if (!vcap.open(videoName)) {
+		std::cout << "Error opening video stream or file" << std::endl;
+		MessageBox::Show("No se pudo abrir la señal de video", "Atención", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	}
+	else {
+		saveConfig();
+		cv::destroyWindow("Video");
+		Application::Exit();
+	}
+	vcap.release();
+}
+private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
+	loadConfig();
 }
 };
 }

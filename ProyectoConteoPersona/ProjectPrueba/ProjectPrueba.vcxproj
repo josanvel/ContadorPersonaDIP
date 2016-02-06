@@ -66,7 +66,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(Platform)\$(Configuration)\$(ProyectoConteoPersonas)</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -129,7 +131,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="cvBlob\cvblob.cpp" />
+    <ClCompile Include="cvBlob\cvlabel.cpp" />
+    <ClCompile Include="cvBlob\cvtrack.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="package_tracking\BlobTracking.cpp" />
+    <ClCompile Include="PBAS\PBAS.cpp" />
+    <ClCompile Include="PBAS\PixelBasedAdaptiveSegmenter.cpp" />
+    <ClCompile Include="people_counter\people_counting.cpp" />
     <ClCompile Include="Ventana.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -155,6 +164,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cvBlob\cvblob.h" />
+    <ClInclude Include="IBGS.h" />
+    <ClInclude Include="package_tracking\BlobTracking.h" />
+    <ClInclude Include="PBAS\PBAS.h" />
+    <ClInclude Include="PBAS\PixelBasedAdaptiveSegmenter.h" />
+    <ClInclude Include="PeopleCounter\people_counting.h" />
     <ClInclude Include="Ventana.h">
       <FileType>CppForm</FileType>
     </ClInclude>

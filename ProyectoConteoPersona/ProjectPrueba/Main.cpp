@@ -2,6 +2,7 @@
 #include <opencv\cxcore.h>
 #include "opencv\cv.h"
 #include "opencv\highgui.h"
+
 #include <iostream>
 #include <string>
 #include <time.h>
@@ -11,6 +12,12 @@
 #include <stdio.h>
 #include <cstdio>
 #include <mysql.h>
+//librerias para hacer tracking
+#include "cvBlob\cvblob.h"
+#include "package_tracking\BlobTracking.h"
+#include "people_counter\people_counting.h"
+#include "IBGS.h"
+#include "PBAS\PixelBasedAdaptiveSegmenter.h"
 
 //Libreria de Interface
 #include "Ventana.h"
@@ -19,38 +26,65 @@ using namespace System;
 using namespace System::Windows::Forms;
 using namespace cv;
 using namespace std;
+using namespace cvb;
+
+//our sensitivity value to be used in the absdiff() function
+const static int SENSITIVITY_VALUE = 20;
+//size of blur used to smooth the intensity image output from absdiff() function
+const static int BLUR_SIZE = 10;
 
 //Conexion con la bases de datos
 MYSQL* conexionBase();
 
-// Create a new Haar classifier
-static CvHaarClassifierCascade* cascade = 0;
-CascadeClassifier face_cascade;
-CascadeClassifier eyes_cascade;
-
 //Region de Interes
-int punto_x = 400;
-int punto_y = 40;
-int ancho = 260;
-int largo = 300;
-
-// Function prototype for detecting and drawing an object from an image
-void detect_and_draw(Mat img);
-//Function  store face
-void guardar_rostro(Mat face, int num);
-// Create a string that contains the cascade name
-const char* cascade_name = "haarcascade_frontalface_alt.xml";
-
-// Create a folder containing the images of the face detection
-const string folder_image = "face_img";
-const string folder = "face";
+int roi_punto_x0 = 400;
+int roi_punto_y0 = 40;
+int roi_punto_x1 = 260;
+int roi_punto_y1 = 300;
+//Linea limitadora
+int linea_punto_x0 = 400;
+int linea_punto_y0 = 40;
+int linea_punto_x1 = 260;
+int linea_punto_y1 = 300;
+//Nombre del video
+string video;
+//cargar configuracion
+Boolean loadConfig();
 
 int main(){
 	VideoCapture vcap;
-	Mat frame, copy;
+	Mat frame, copy, img_blob;
+	//some boolean variables for added functionality
+	bool objectDetected = false;
+	//these two can be toggled by pressing 'd' or 't'
+	bool debugMode = false;
+	bool trackingEnabled = true;
+	//pause and resume code
+	bool pause = false;
+	//set up the matrices that we will need
+	//the two frames we will be comparing
+	Mat frame1, frame2, roi1, roi2;
+	//their grayscale images (needed for absdiff() function)
+	Mat grayImage1, grayImage2;
+	//resulting difference image
+	Mat differenceImage;
+	//thresholded difference image (for use in findContours() function)
+	Mat thresholdImage;
+	//video capture object.
+	VideoCapture capture;
+	//Blob Tracking
+	BlobTracking* blobTracking;
+	blobTracking = new BlobTracking;
+	/* People Counting Algorithm */
+	PeopleCouting* peoplecounting;
+	peoplecounting = new PeopleCouting;
+	/* Background Subtraction Algorithm */
+	IBGS *bgs;
+	bgs = new PixelBasedAdaptiveSegmenter;
+
 
 	// Create a folder containing the images of the face detection
-	_mkdir(folder_image.c_str());
+	//_mkdir(folder_image.c_str());
 
 	//Variable de Bases de datos
 	MYSQL *conn;
@@ -79,37 +113,76 @@ int main(){
 	mysql_free_result(res);
 	mysql_close(conn);
 
-	if (!face_cascade.load(cascade_name)){ printf("--(!)Error loading\n"); return -1; };
-	//if (!eyes_cascade.load(eyes_cascade_name)){ printf("--(!)Error loading\n"); return -1; };
+	if (loadConfig()){
+		while (1){
 
-	if (!vcap.open("video1.avi")) {
-		std::cout << "Error opening video stream or file" << std::endl;
-		return -1;
-	}
+			//we can loop the video by re-opening the capture every time the video reaches its last frame
 
-	vcap.set(CV_CAP_PROP_FPS, 10);
-	vcap.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
-	vcap.set(CV_CAP_PROP_FRAME_HEIGHT, 620);
-	for (;;) {
+			capture.open(video);
 
-		
+			if (!capture.isOpened()){
+				cout << "ERROR ACQUIRING VIDEO FEED\n";
+				getchar();
+				return -1;
+			}
+			//capture.set(CV_CAP_PROP_FPS, 10);
+			//check if the video has reach its last frame.
+			//we add '-1' because we are reading two frames from the video at a time.
+			//if this is not included, we get a memory error!
+			while (capture.get(CV_CAP_PROP_POS_FRAMES) < capture.get(CV_CAP_PROP_FRAME_COUNT) - 1){
 
-		if (!vcap.read(frame)) {
-			std::cout << "No frame" << std::endl;
-			cvWaitKey();
-			break;
+				//read first frame
+				capture.read(frame);
+				cv::Mat img_input;
+				img_input = frame(Rect(roi_punto_x0, roi_punto_y0, roi_punto_x1 - roi_punto_x0, roi_punto_y1 - roi_punto_y0));
+				cv::imshow("Input", img_input);
+
+				// bgs->process(...) internally process and show the foreground mask image
+				cv::Mat img_mask;
+				bgs->process(img_input, img_mask);
+
+				if (!img_mask.empty())
+				{
+					// Perform blob tracking
+					blobTracking->process(img_input, img_mask, img_blob);
+
+					// Perform vehicle counting
+					peoplecounting->setInput(img_blob);
+					peoplecounting->setTracks(blobTracking->getTracks());
+					peoplecounting->process();
+				}
+
+				switch (waitKey(10)){
+
+				case 27: //'esc' key has been pressed, exit program.
+					return 0;
+				case 112: //'p' has been pressed. this will pause/resume the code.
+					pause = !pause;
+					if (pause == true){
+						cout << "Code paused, press 'p' again to resume" << endl;
+						while (pause == true){
+							//stay in this loop until 
+							switch (waitKey()){
+								//a switch statement inside a switch statement? Mind blown.
+							case 112:
+								//change pause back to false
+								pause = false;
+								cout << "Code Resumed" << endl;
+								break;
+							}
+						}
+					}
+				}
+			}
+			delete peoplecounting;
+			delete blobTracking;
+			delete bgs;
+
+			cvDestroyAllWindows();
+			//release the capture before re-opening and looping again.
+			capture.release();
 		}
-		resize(frame, frame, Size(1080, 620), 0, 0, INTER_CUBIC);
-		copy = frame.clone();
-		detect_and_draw(copy);
-		cv::imshow("SeñalesVideo", copy);
-
-		if (cvWaitKey(1) >= 0) break;
-
 	}
-	vcap.release();
-
-
 	getchar();
 	return(0);
 }
@@ -132,81 +205,31 @@ MYSQL* conexionBase(){
 	return(conn);
 }
 
-
-
-// Funcion para detectar y dibujar ciertas caracteristicas dentro de una imagen
-void detect_and_draw(Mat img){
-std::vector<Rect> faces;
-Mat frame_gray;
-Mat roi = img(Rect(punto_x, punto_y, ancho, largo));
-cvtColor(roi, frame_gray, CV_BGR2GRAY);
-equalizeHist(frame_gray, frame_gray);
-
-rectangle(img, Point(punto_x, punto_y), Point(punto_x + ancho, punto_y + largo), Scalar(0, 0, 255), 2, 8, 0);
-
-//-- Detect faces
-face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(10, 10));
-for (size_t i = 0; i < faces.size(); i++)
+Boolean loadConfig()
 {
-//Point center(faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5);
-//ellipse(roi, center, Size(faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar(0, 0, 255), 4, 8, 0);
-rectangle(roi, Point(faces[i].x - 10, faces[i].y - 10), Point(faces[i].width + faces[i].x + 10, faces[i].height + faces[i].y + 10),
-Scalar(0, 0, 255), 2, 8, 0);
+	CvFileStorage* fs = cvOpenFileStorage("config/Calibracion.xml", 0, CV_STORAGE_READ);
+	string videoName = cvReadStringByName(fs, 0, "ruta_video", 0);
+	int condigurado = cvReadIntByName(fs, 0, "calibrado", 0);
+	if (condigurado = 1){
+		video = cvReadStringByName(fs, 0, "ruta_video", 0);
+		roi_punto_x0 = cvReadIntByName(fs, 0, "roi_x0", 0);
+		roi_punto_y0 = cvReadIntByName(fs, 0, "roi_y0", 0);
+		roi_punto_x1 = cvReadIntByName(fs, 0, "roi_x1", 0);
+		roi_punto_y1 = cvReadIntByName(fs, 0, "roi_y1", 0);
 
-rectangle(img, Point(punto_x + faces[i].x, punto_y + faces[i].y),
-Point(faces[i].width + faces[i].x + punto_x,
-faces[i].height + faces[i].y + punto_y),
-Scalar(0, 0, 255), 2, 8, 0);
-guardar_rostro(roi(Rect(faces[i].x, faces[i].y, faces[i].width, faces[i].height)), i);
-//Mat faceROI = frame_gray(faces[i]);
-//std::vector<Rect> eyes;
+		linea_punto_x0 = cvReadIntByName(fs, 0, "limitador_x0", 0);
+		linea_punto_y0 = cvReadIntByName(fs, 0, "limitador_y0", 0);
+		linea_punto_x1 = cvReadIntByName(fs, 0, "limitador_x1", 0);
+		linea_punto_y1 = cvReadIntByName(fs, 0, "limitador_y1", 0);
+		cvReleaseFileStorage(&fs);
+		return true;
+		
+	}
+	else{
+		cvReleaseFileStorage(&fs);
+		return false;
+	}
+	
 
-////-- In each face, detect eyes
-//eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(15, 15));
-
-//for (size_t j = 0; j < eyes.size(); j++)
-//{
-//Point center(faces[i].x + eyes[j].x + eyes[j].width*0.5, faces[i].y + eyes[j].y + eyes[j].height*0.5);
-//int radius = cvRound((eyes[j].width + eyes[j].height)*0.25);
-//circle(roi, center, radius, Scalar(255, 0, 0), 4, 8, 0);
-//}
-}
-
-cv::imshow("SeñalesVideo", img);
-cv::imshow("Region de interes", roi);
-}
-
-//Function  store face
-void guardar_rostro(Mat face, int num){
-time_t     now = time(0);
-struct tm  tstruct;
-char       buf[80];
-localtime_s(&tstruct, &now);
-
-char dia[50];
-char hora[50];
-string namefile;
-string name_folder;
-strftime(dia, sizeof(dia), "%Y%m%d", &tstruct);
-strftime(hora, sizeof(hora), "%H-%M-%S", &tstruct);
-vector<int> compression_params;
-compression_params.push_back(IMWRITE_PNG_COMPRESSION);
-compression_params.push_back(9);
-namefile = "/" + string(hora) + ".png";
-
-name_folder = folder + "_" + string(dia);
-
-string guardar = folder_image + "/" + name_folder;
-_mkdir(guardar.c_str());
-
-try {
-imwrite(namefile, face, compression_params);
-imwrite(guardar + namefile, face, compression_params);
-}
-catch (cv::Exception& ex) {
-fprintf(stderr, "Exception converting image to PNG format: %s\n", ex.what());
-
-}
-
-//imwrite("/rostros/" + String(dia) + "-" + String(hora) + ".jpg", face);
+	
 }

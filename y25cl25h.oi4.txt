@@ -1,0 +1,25 @@
+﻿
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	modified:   ProyectoConteoPersona/ProjectPrueba/Ventana.cpp
+#	modified:   ProyectoConteoPersona/ProjectPrueba/Ventana.h
+#	modified:   ProyectoConteoPersona/ProjectPrueba/x64/Debug/ProjectPrueba.log
+#	modified:   ProyectoConteoPersona/ProjectPrueba/x64/Debug/ProjectPrueba.vcxproj.GenerateResource.Cache
+#	modified:   ProyectoConteoPersona/ProjectPrueba/x64/Debug/Proyecto.4852AFA5.tlog/CL.read.1.tlog
+#	modified:   ProyectoConteoPersona/ProjectPrueba/x64/Debug/Proyecto.4852AFA5.tlog/CL.write.1.tlog
+#	modified:   ProyectoConteoPersona/ProjectPrueba/x64/Debug/Proyecto.4852AFA5.tlog/ProyectoConteoPersonas.write.1u.tlog
+#	modified:   ProyectoConteoPersona/ProjectPrueba/x64/Debug/Proyecto.4852AFA5.tlog/cl.command.1.tlog
+#	modified:   ProyectoConteoPersona/ProjectPrueba/x64/Debug/Proyecto.4852AFA5.tlog/link.read.1.tlog
+#	modified:   ProyectoConteoPersona/ProjectPrueba/x64/Debug/vc120.pdb
+#	modified:   ProyectoConteoPersona/ProyectoConteoPersonas.v12.suo
+#
+# Untracked files:
+#	ProyectoConteoPersona/ProyectoConteoPersonas.opensdf
+#	ProyectoConteoPersona/ProyectoConteoPersonas.sdf
+#	ProyectoConteoPersona/x64/Debug/ProyectoConteoPersonas.pdb
+#
+
