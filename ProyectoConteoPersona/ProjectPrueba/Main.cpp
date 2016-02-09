@@ -192,7 +192,7 @@ MYSQL* conexionBase(){
 
 	const char *server = "localhost";
 	const char *user = "root";
-	const char *password = "";
+	const char *password = "mysql";
 	const char *database = "db_prueba";
 	const int port = 3306;
 

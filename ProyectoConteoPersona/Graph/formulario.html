@@ -1,79 +1,92 @@
-<!doctype html>
-<html lang="en-US">
-
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Type" content="text/html">
-  <title>Horizontal Application Form - Template Monster Demo</title>
-  <meta name="author" content="Jake Rocheleau">
-  <link rel="shortcut icon" href="http://static.tmimgcdn.com/img/favicon.ico">
-  <link rel="icon" href="http://static.tmimgcdn.com/img/favicon.ico">
-  <link rel="stylesheet" type="text/css" media="all" href="css/styles.css">
-  <link rel="stylesheet" type="text/css" media="all" href="css/switchery.min.css">
-  <!-- link calendar resources -->
-  <link rel="stylesheet" type="text/css" href="css/tcal.css" />
-  <script type="text/javascript" src="js/tcal.js"></script> 
-
-  <script type="text/javascript" src="js/switchery.min.js"></script>
-</head>
-
-<body>
-  <div id="wrapper">
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bootstrap 101 Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
   
-  <h1>Gr&aacute;ficas Estad&iacute;sticas</h1>
+    <link type="text/css" rel="stylesheet" href="dist/css/bootstrap.css" >
+    <link type="text/css" rel="stylesheet" href='http://fonts.googleapis.com/css?family=Lato:100,300,400' />
+    <link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+    <link type="text/css" rel="stylesheet" href="dist/css/elements.css" />
+    <link type="text/css" rel="shortcut icon" href="http://static.tmimgcdn.com/img/favicon.ico">
+    <link type="text/css" rel="icon" href="http://static.tmimgcdn.com/img/favicon.ico">
+    <link type="text/css" rel="stylesheet" type="text/css" media="all" href="css/switchery.min.css">
+    <link type="text/css" rel="stylesheet" type="text/css" href="css/tcal.css" />
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   
-  <form action="graficar.php" method="post" target="ventana" name="disponible" onsubmit="window.open('', 'ventana','width=500,height=500')">
-    
-  <div class="col-4">
-    <label>
-      Tipo de gr&aacute;fica
-      <select tabindex="1" name="tipo">
-        <option  value="Barras">Barras</option>
-        <option  value="Pastel">Pastel</option>
-        <option  value="Lineas">L&iacute;neas</option>
-      </select>    
-    </label>
-  </div>
-  <div class="col-4">
-    <label>
-      Fecha Inicial
-    </label>
-      <input type="text" name="fecha_inicial" class="tcal" readonly="readonly" tabindex="2"/>
-  </div>
-  <div class="col-4">
-    <label>
-      Fecha Final
-    </label>
-      <input type="text" name="fecha_final" class="tcal" readonly="readonly" tabindex="2"/>
-    
-  </div>
-  <div class="col-4">
-    <label>
-      Segmento
-      <select tabindex="3" name="periodo">
-        <option value="diario">Diario</option>
-        <option value="semanal">Semanal</option>
-        <option value="mensual">Mensual</option>
-      </select>
-    </label>
-  </div>
-  
-  
-  <div class="col-submit">
-    <button class="submitbtn" name="graficar">Ver Grafica</button>
-  </div>
-  
-  </form>
-  
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="js/tcal.js"></script> 
+    <script type="text/javascript" src="js/switchery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/ajax.js"></script>
 
-  </div>
-<script type="text/javascript">
-var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
+  </head>
+  <body style="background-color: #2B303B;" >
+    <div class="container" >
+      <br><br><br>
+      <div class="row col-md-12 col-xs-12" >
+        <br>
+        <!---->
+        <div class="col-md-12">
+            <div class="panel panel-primary " style="width: 100%;">
+              <!-- Default panel contents -->
+              <div class="panel-heading" style="padding-top: 0px; padding-bottom: 0px;">Configuraci&oacute;n de Graficas Estadisticas</div>
+              <div class="panel-body">
+                
+                <form action="graficar.php" method="post" name="disponible" >
+                  <br>
+                  <!--INICIO COMBOBOX   FECHA INICIO/FIN-->
+                  <div class="container col-md-12" align="center" id="fecha">
+                    <input class="col-md-5" autofocus type="date" id="fecha_inicial" name="fecha_inicial" data-trigger="focus" style="height: 27px">
+                    <input class=" col-md-offset-2 col-md-5" autofocus type="date" id="fecha_final" name="fecha_final" data-trigger="focus" style="height: 27px">
+                  </div>
+                  <!--FIN COMBOBOX   FECHA INICIO/FIN-->   
+                  <br><br><br>
+                  <!--INICIO BOTTON   GRAFICAR-->
+                  <div class="col-xs-12 col-sm-5 col-md-5">
+                    <label>
+                      Tipo de gr&aacute;fica
+                      <select tabindex="1" name="tipo">
+                        <option  value="Barras">Barras</option>
+                        <option  value="Pastel">Pastel</option>
+                        <option  value="Lineas_Entra">L&iacute;neal - Entra</option>
+                        <option  value="Lineas_Sale">L&iacute;neal - Sale</option>
+                      </select>    
+                    </label>
+                  </div>
 
-elems.forEach(function(html) {
-  var switchery = new Switchery(html);
-});
+                  <div class="col-xs-12 col-sm-offset-2 col-sm-5 col-md-offset-2 col-md-5" align="center">
+                    <button class="btn btn-blue" style="height: 27px"><i class="fa fa-bar-chart"  ></i>&nbsp;&nbsp;Graficar Estadisticas</button>
+                  </div>
+                  <!--FIN BOTTON   GRAFICAR-->        
+                </form>
+                <br>
+              </div>
+            </div>
+        </div>
+        <!---->
+      </div>
 
-</script>
-</body>
+      <div class="row col-md-12 col-xs-12" >
+        <br>
+        <div class="col-md-12">
+          <div class="panel panel-danger" style="width: 100%;">
+              <div align="center">
+                  <img class="img-responsive" src="cidis.jpg" alt="" border="0">
+                </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="dist/js/bootstrap.min.js"></script>
+  </body>
 </html>

@@ -9,106 +9,178 @@ class Graficos {
 	
 	var $fecha_inicial;
 	var $fecha_final;
+	var $conexion;
 
-	public function __construct($fecha_inicial,$fecha_final){
-		mysql_connect("localhost","root","");
-		mysql_select_db("db_prueba");
+	public function __construct($fecha_inicial, $fecha_final){
+		$this->conexion = mysql_connect("localhost","root","mysql");
+		mysql_select_db("db_prueba", $this->conexion);
 		$this->fecha_inicial = $fecha_inicial;
 		$this->fecha_final = $fecha_final;
 	}
 	
-	public function graficar_lineas() {
+	public function graficar_lineas_Entra() {
 
-		$ofi1 = array(100,300,250,200,350);
-		$ofi2 = array(50,250,300,320,200);
-		$labels=array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo');
+		$sql1 = "call PRGetGraficaDiasEntra('$this->fecha_inicial','$this->fecha_final');";
+		$res1 = mysql_query($sql1,$this->conexion);
+		while ( $row = mysql_fetch_array($res1)) {
+			$datos1[] = $row["ContadorMes"];
+		}
+
+		$labels=array("Ene","Feb","Mar","Abr","May","Jun","Jul","Agos","Sep", "Oct","Nov","Dic");
 		
-		$grafico = new Graph(940,400,'auto');
-		$grafico->SetScale("textlin");
-		$grafico->SetMargin(50,30,30,50);
-		$grafico->title->Set("GASTOS POR MES");
-		$grafico->xaxis->title->Set("MES");
-		$grafico->xaxis->SetTickLabels($labels);
-		$grafico->yaxis->title->Set("GASTOS");
-				
-		$grafico->xgrid->Show();
-		$grafico->xgrid->SetLineStyle("solid");
-		$grafico->xgrid->SetColor('#E3E3E3');
+		$graph = new Graph(1200,800,'auto');
+		$graph->SetScale("textlin");
+		$graph->SetMargin(50,30,30,50);
+		$graph->title->Set("Graficos");
+		$graph->SetBox(false);
+		$graph->xaxis->title->Set("MES");
+		$graph->xaxis->SetTickLabels($labels);
+		$graph->yaxis->title->Set("CANTIDAD PERSONAS");
+
+		$graph->xgrid->Show();
+		$graph->xgrid->SetLineStyle("solid");
+		$graph->xgrid->SetColor('#E3E3E3');
 		
-		$p1 = new LinePlot($ofi1);
-		$grafico->Add($p1);
+		$p1 = new LinePlot($datos1);
+		$graph->Add($p1);
 		$p1->value->Show();
 		$p1->SetColor("#6495ED");
-		$p1->SetLegend('Oficina 1');
+		$p1->SetLegend('ENTRA');
+
+		$p1->mark->SetType(MARK_FILLEDCIRCLE,'',1.0);
+		$p1->mark->SetColor('#55bbdd');
+		$p1->mark->SetFillColor('#55bbdd');
+		$p1->SetCenter();
 		
-		$p2 = new LinePlot($ofi2);
-		$grafico->Add($p2);
-		$p2->value->Show();
-		$p2->SetColor("#B22222");
-		$p2->SetLegend('Oficina 2');
+		$graph->legend->SetFrameWeight(1);
+
+		$graph->legend->SetColor('#4E4E4E','#00A78A');
+		$graph->legend->SetMarkAbsSize(8);
 		
-		$grafico->legend->SetFrameWeight(1);
+		$graph->title->SetFont(FF_FONT1,FS_BOLD);
+		$graph->yaxis->title->SetFont(FF_FONT1,FS_BOLD);
+		$graph->xaxis->title->SetFont(FF_FONT1,FS_BOLD);
 		
-		$grafico->title->SetFont(FF_FONT1,FS_BOLD);
-		$grafico->yaxis->title->SetFont(FF_FONT1,FS_BOLD);
-		$grafico->xaxis->title->SetFont(FF_FONT1,FS_BOLD);
-		
-		$grafico->Stroke();
+		$graph->Stroke();
 	}
-	
+
+	public function graficar_lineas_Sale() {
+
+		$sql1 = "call PRGetGraficaDiasSale('$this->fecha_inicial','$this->fecha_final');";
+		$res1 = mysql_query($sql1,$this->conexion);
+
+		while ( $row = mysql_fetch_array($res1)) {
+			$datos1[] = $row["ContadorMes"];
+		}
+
+		$labels=array("Ene","Feb","Mar","Abr","May","Jun","Jul","Agos","Sep", "Oct","Nov","Dic");
+		
+		$graph = new Graph(1200,800,'auto');
+		$graph->SetScale("textlin");
+		$graph->SetMargin(50,30,30,50);
+		$graph->title->Set("Graficos");
+		$graph->SetBox(false);
+		$graph->xaxis->title->Set("MES");
+		$graph->xaxis->SetTickLabels($labels);
+		$graph->yaxis->title->Set("CANTIDAD PERSONAS");
+
+		$graph->xgrid->Show();
+		$graph->xgrid->SetLineStyle("solid");
+		$graph->xgrid->SetColor('#E3E3E3');
+		
+		$p1 = new LinePlot($datos1);
+		$graph->Add($p1);
+		$p1->value->Show();
+		$p1->SetColor("#FF69B4");
+		$p1->SetLegend('SALE');
+
+		$p1->mark->SetType(MARK_UTRIANGLE,'',1.0);
+		$p1->mark->SetColor('#FF69B4');
+		$p1->mark->SetFillColor('#FF69B4');
+		$p1->SetCenter();
+		
+		$graph->legend->SetFrameWeight(1);
+
+		$graph->legend->SetColor('#4E4E4E','#00A78A');
+		$graph->legend->SetMarkAbsSize(8);
+		
+		$graph->title->SetFont(FF_FONT1,FS_BOLD);
+		$graph->yaxis->title->SetFont(FF_FONT1,FS_BOLD);
+		$graph->xaxis->title->SetFont(FF_FONT1,FS_BOLD);
+		
+		$graph->Stroke();
+	}
+
 	public function graficar_barras() {
 
 		//Consulta de prueba
-		$sql = "SELECT p.Estado, COUNT(1) AS Contador FROM Persons p GROUP BY p.Estado;";
-		$res = mysql_query($sql);
+		$sql ="call PRGetGraficaDias('$this->fecha_inicial','$this->fecha_final');";
 
+		$res = mysql_query($sql);
 		while ( $row = mysql_fetch_array($res)) {
 			$datos[] = $row["Contador"];
 			$labels[] = $row["Estado"];
 		}
 
-
 		// Create the graph. These two calls are always required 
-		$graph = new Graph(450,400,"auto");	
+		$graph = new Graph(1000,700,"auto");	
 		$graph->SetScale("textint"); 
 		$graph->img->SetAntiAliasing(); 
 		$graph->xgrid->Show();
 		// Setup margin and titles 
-		$graph->img->SetMargin(40,20,20,40); 
-		$graph->title->Set($_POST['tipo']); 
+		$graph->img->SetMargin(350,100,100,40); 
+		//$graph->title->Set($_POST['tipo']); 
 		$graph->xaxis->title->Set("Estado"); 
 		$graph->xaxis->SetTickLabels($labels);
-		$graph->yaxis->title->Set("Contador"); 
-		$graph->ygrid->SetFill(true,'#EFEFEF@0.5','#F9BB64@0.5'); 
+		$graph->yaxis->title->Set("Cantidad de Personas"); 
+		$graph->ygrid->SetFill(true,'#EFEFEF','#FCDDB2'); 
 		//$graph->SetShadow(); 
 		$barplot1 = new BarPlot($datos);
-		$barplot1->SetFillGradient("#BE81F7", "#E3CEF6", GRAD_HOR);
+		//$barplot1->SetFillColor("#FFCC00", "#E3CEF6");
 		$barplot1->SetWidth(30);
 		// Add the plot to the graph 
 		$graph->Add($barplot1); 
+		//$barplot1->value->SetColor('black','darkred');
 		// Display the graph 
 		$graph->Stroke();
 	}
 	
 	public function graficar_pastel() {
-		$datos = array(100,300);
 
-		$grafico = new PieGraph(940,400,'auto');
-		$grafico->SetScale("textlin");
-		$grafico->SetMargin(50,30,30,40);
-		
-		$tema= new VividTheme;
-		$grafico->SetTheme($tema);
+		$sql ="call PRGetGraficaDias('$this->fecha_inicial','$this->fecha_final');";
 
-		$grafico->title->Set("% HOMBRES y MUJERES");
+		$res = mysql_query($sql);
+		while ( $row = mysql_fetch_array($res)) {
+			$datos[] = $row["Contador"];
+			$labels[] = $row["Estado"];
+		}
 
-		$p1 = new PiePlot3D($datos);
-		$grafico->Add($p1);
-
-		$p1->ShowBorder();
-		$p1->SetColor('white');
-		$p1->ExplodeSlice(1);
-		$grafico->Stroke();
+		// A new graph
+		$graph = new PieGraph(1000,800);
+		$graph->img->SetAntiAliasing(); 
+		// The pie plot
+		$p1 = new PiePlotC($datos);
+		$p1->SetSliceColors(array('hotpink','aquamarine3','lightblue','gray','darkolivegreen2','turquoise3',
+								  'wheat1','lightsalmon','khaki1','orange','cadetblue3','salmon1'));
+		 
+		// Move center of pie to the left to make better room
+		// for the legend
+		$p1->SetSize(0.3);
+		 
+		// Set color for mid circle
+		$p1->SetMidColor('white');
+		$p1->SetCenter(0.5,0.4);
+		$p1->value->Show();
+		$p1->value->SetFont(FF_ARIAL,FS_NORMAL,8);
+		$p1->ExplodeAll(10);
+		 
+		// Legends
+		$p1->SetLegends(array("ENTRA","SALE"));
+		$graph->legend->SetPos(0.9,0.9,'center','bottom');
+		$graph->legend->SetColumns(6);
+		 
+		$graph->Add($p1);
+		$graph->Stroke();
 	}
 }
 ?>
