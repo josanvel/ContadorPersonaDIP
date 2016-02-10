@@ -1,4 +1,4 @@
-####################################################################################
+
 ####################################   PROCEDURE   DIAS  ###########################################
 ######### Procedure GetBarrasDias #########
 DROP Procedure PRGetGraficaDias;
@@ -10,12 +10,13 @@ CREATE PROCEDURE PRGetGraficaDias
 SELECT	p.Estado AS Estado, 
 		COUNT(1) AS Contador
 FROM Persons p 
-WHERE p.FechaActual
+WHERE CAST(p.FechaActual AS DATE)
 		BETWEEN Fecha_Inicio AND Fecha_Final
 GROUP BY p.Estado;
 END //
 delimiter ;
 call PRGetGraficaDias('2001-01-01','2001-02-10');
+call PRGetGraficaDias('2001-12-23','2001-12-23');
 
 ######### Procedure PRGetGraficaDiasEntra #########
 DROP Procedure PRGetGraficaDiasEntra;
@@ -39,7 +40,7 @@ LEFT JOIN	(	SELECT 	YEAR(p.FechaActual) AS Anio,
 						p.FechaActual AS FechaActual
 				FROM persons p
 				WHERE Estado like "Entra"
-				AND p.FechaActual BETWEEN Dia_Inicio AND Dia_Final
+				AND CAST(p.FechaActual AS DATE) BETWEEN Dia_Inicio AND Dia_Final
 				GROUP BY YEAR(p.FechaActual), MONTHNAME(p.FechaActual)
 				ORDER BY Anio DESC, Mes ASC
 			) AS Pers
@@ -49,6 +50,7 @@ ORDER BY t.Mes ASC, t.anio;
 END //
 delimiter ;
 call PRGetGraficaDiasEntra('2001-01-01','2001-02-10');
+call PRGetGraficaDiasEntra('2001-12-23','2001-12-23');
 
 ######### Procedure PRGetGraficaDiasSale #########
 DROP Procedure PRGetGraficaDiasSale;
@@ -72,7 +74,7 @@ LEFT JOIN	(	SELECT 	YEAR(p.FechaActual) AS Anio,
 						p.FechaActual AS FechaActual
 				FROM persons p
 				WHERE Estado like "Sale"
-				AND p.FechaActual BETWEEN Dia_Inicio AND Dia_Final
+				AND CAST(p.FechaActual AS DATE) BETWEEN Dia_Inicio AND Dia_Final
 				GROUP BY YEAR(p.FechaActual), MONTHNAME(p.FechaActual)
 				ORDER BY Anio DESC, Mes ASC
 			) AS Pers
@@ -82,6 +84,7 @@ ORDER BY t.Mes ASC, t.anio;
 END //
 delimiter ;
 call PRGetGraficaDiasSale('2001-01-01','2002-08-10');
+call PRGetGraficaDiasSale('2001-12-23','2001-12-23');
 
 
 ####################################   PROCEDURE   ANIO  ###########################################
@@ -237,3 +240,4 @@ FROM(	select	YEAR(p.FechaActual) AS Anio,
 			) AS Pers;
 END //
 delimiter ;
+call PRGetGraficaDias('2001-12-23','2001-12-23');
